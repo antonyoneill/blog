@@ -6,7 +6,7 @@
 If not already done so:
 
 ```bash
-ykpersonalize -2 -ochal-resp -ochal-hmac -ohmac-lt64 -oserial-api-visible
+ykman otp chalresp --touch --generate 2 
 ```
 
 ## Necessary Packages
