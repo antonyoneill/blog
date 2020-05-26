@@ -47,3 +47,9 @@ A good example of DDD in the real world comes from a previous role: [`boclips/vi
 ## Clean Architecture
 
 _tbc_
+
+# Todo
+
+- [ ] Provide more detail on MVC, inc +/-ves
+- [ ] Add detail for Clean Architecture
+- [ ] Add references
