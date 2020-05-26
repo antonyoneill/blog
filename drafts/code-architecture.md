@@ -24,23 +24,25 @@ A popular, although fringe design pattern is Domain Driven Design, affectionally
 
 DDD maintains four layers, using a modern programming language you would typically use namespaces to ensure the concerns do not overlap.
 
-* **Presentation Layer**
+* **Presentation Layer**  
   Responsible for anything user facing -- a REST API, rendered web page, command line interface/interpretter -- this layer decides what Application command to run (based on routing/command parameters), maps incoming requests to a Domain model, and maps Application command responses to the relevant presentation response.
-* **Application Layer**
+* **Application Layer**  
   Responsible only for defining Application commands that the application can provide, such as creating a todo task, marking it complete, editing it, etc.
   These commands use Domain services to acheive the command goal. They should ideally be written in such a way that it is clear to a non-programmer what is going on, and what the purpose of the command is.
   In-depth concerns (i.e. how to create a todo task, ins and outs of validation) should not be raised here, instead these lower-level tasks should be refactored down into Domain services.
-* **Domain Layer**
+* **Domain Layer**  
   This layer contains the Models of the application, using real world terms. A shared nomanculture is extremely important when using DDD as it helps build empathy with the users of the system, but also enables easier discussion with all stakeholders involved.
   Services are defined in this layer that operate in terms of Domain Models. They have access to Infrastructure services, and other Domain services. While these services have access to Infrastructure concerns, the lower-level details are abstracted away.
   For example, the Domain may wish to persist a Domain Model, it will be empowered to request the Infrastructure persistence service to store the model, but in terms of what and how that happens does not matter to the Domain Service.
-* **Infrastructue Layer**
+* **Infrastructure Layer**  
   Arguably the most fundamental layer, this layer is responsible for external services, such as persistence (database, search engines), mailers, loggers, third-party APIs.
   The Infrastructure layer usually has it's own Model of the application, often nested objects within the Domain Model must be separated out into individual tables, for a relational database for example. Or Elastic Search documents need to be modeled for easy insertion and retrieval.
 
 Having clear boundaries facilitates several things, easier testing, more maintainable code, and most importantly it reduces vendor/technology "lock in". Consider a typical application, where there's a need to move from a relational database to a NoSQL one. This could be a huge undertaking, as in most systems these relations, and SQL concerns are baked into most classes. In DDD the persistence is isolated in the Infrastructure layer - provided you don't break the contract, this becomes a very easy peice of work.
 
 A clear downside to DDD though is that you end up writing many many mappers of models. Remember that almost each layer contains it's own Model of the world.
+
+A good example of DDD in the real world comes from a previous role: [`boclips/videos`](https://github.com/boclips/videos/tree/master/video-service/src/main/kotlin/com/boclips/videos/service). You can see the clear boundaries of the layers here. The project is written in Kotlin and uses Spring Boot and Aspect Oriented Programming to simplify a lot of the dependency injection.
 
 ## Clean Architecture
 
