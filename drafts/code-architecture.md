@@ -46,10 +46,81 @@ A good example of DDD in the real world comes from a previous role: [`boclips/vi
 
 ## Clean Architecture
 
-_tbc_
+> This is a pattern that I am fairly new to, but will do my best to describe some of the key aspects of it that I have picked up over the last month.
+
+> In general it seems to be a less regimented form of DDD. Layers exist but are not as clearly defined, and different terminology is used to describe some similar DDD concepts.
+
+Using Clean Architecture, you are encouraged to move business logic into individual, well defined, usecases. You would typically follow the patterns for the framework you're using, but separate out the usecases from the boiler plate. This allows you to execute the same business logic from within a HTTP controller, a command line processor, or user entry points to your application.
+
+
+* **Gateways**  
+  Gateways provide access to third party services, APIs, databases, etc.
+
+  Specifics related to these external services should be encapsulated within these gateways. The defined interfaces should be well designed to ensure that the implementation of the gateway is does not leak into the application.
+
+  Consider a database gateway, that may have an interface such as
+  
+  ```typescript
+  interface DatabaseGateway {
+    insertTodo: (todo: Todo): Promise<void>;
+    getTodo: (id: number): Promise<Todo>;
+  }
+  ```
+  
+  Provided the gateway encapsulates all implementation logic, it makes changing that implementation to a different technology very simple.
+
+* **Usecases**  
+  Usecases should provide an abstraction over business logic. They may use other usecases (composite usecases), or interact with Gateways etc.
+  
+  Other usecases and gateways should be referenced using Dependency Injection. Some frameworks provide this out of the box (Spring Boot for example uses Annotations and Aspect Oriented Programming), sometimes a simple AppContainer can suffice.
+
+  For example, if an application wants to create a Todo item then it may validate the item, then store it in the database for lookup later, then send an email alert that it has been created. This composite usecase may look something like
+
+  ```typescript
+  const createTodo = ({getValidateTodo, getDatabase, getMailer}) => async (todo: Todo): Promise<CreateTodoResponse> => {
+      const validationResult = getValidateTodo()(todo);
+
+      if (!validationResult.success) {
+          return {
+              success: false,
+              error: {
+                  message: "Validation errors occurred: " + validationResult.errors.join(', ')
+              }
+          }
+      }
+
+      const persistanceResult = await getDatabase().insertTodo(todo);
+
+      if (!persistanceResult.success) {
+          return {
+              success: false,
+              error: {
+                  message: "Persistance failed: " + persistanceResult.errors.join(', ')
+              }
+          }
+      }
+
+      await getMailer().sendNewTodoEmail(todo)
+      
+      return {
+          success: true,
+          error: null
+      }
+  }
+  ```
+
+* **Helpers**  
+  Helpers are an abstraction away from some of the usecases. The distinction between the two are very subtle. In my mind, helpers are a way of defining very simple matters, things like field level validators, regex patterns, time manipulation etc.
+
+  In some projects, these helpers can be used on both the frontend and backend. In these scenarios it can make sense to produce two different AppContainers, one for web, and one for serverside.
+
+### References
+
+- [The Clean Architecture Blog](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Made Tech - Clean Architecture](https://github.com/madetech/clean-architecture)
+- [lukemorton.co.uk source](https://github.com/lukemorton/lukemorton.co.uk/tree/a4343251f4540ea75d867e73b12309a65d62f186) 
 
 # Todo
 
 - [ ] Provide more detail on MVC, inc +/-ves
-- [ ] Add detail for Clean Architecture
 - [ ] Add references
