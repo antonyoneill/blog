@@ -17,7 +17,7 @@ Recommended links:
 
 ```bash
 mv /usr/share/remarkable /home/remarkable-resources
-ln -s /usr/share/remarkable /home/remarkable-resources
+ln -s /home/remarkable-resources /usr/share/remarkable
 ```
 
 Recommended Folder Sync in Syncthing
@@ -30,6 +30,6 @@ Recommended Folder Sync in Syncthing
 
 When the remarkable tablet is updated, customised files are often replaced.
 
-If you're smart, you'll copy the `/home/root/.entware/etc/syncthing/config.xml`. I am not smart and removed the entire entware directory before I realised.
+You'll want to carefully override the files in `/home/remarkable-resources` with the new files from ReMarkable. Then relink the `remarkable-resources` folder as above.
 
-I find it is easiest to just remove the `/home/root/.entware` directory and follow the installation steps above.
+Next up, you'll also need to re-activate the entware installation using the script in the [remarkable_entware repo](https://github.com/antonyoneill/remarkable_entware)
